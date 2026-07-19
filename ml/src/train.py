@@ -117,8 +117,13 @@ def evaluate_model(name, model, X_train, X_test, y_train, y_test, cv_folds=5):
 def main():
     parser = argparse.ArgumentParser(description="Train and compare AegisBot risk-classification models.")
     parser.add_argument("--data", type=str,
-                         default="../data/AegisBot_Evidence-Based_Synthetic_Cyber_Risk_Dataset.csv",
-                         help="Path to the dataset CSV.")
+                         default="../data/AegisBot_Real_Training_Dataset.csv",
+                         help="Path to the TRAINING dataset CSV (real survey data).")
+    parser.add_argument("--test-data", type=str, default=None,
+                         help="Optional separate TEST dataset CSV (synthetic). If "
+                              "given, the model trains on ALL of --data and is "
+                              "evaluated on this set, per the train=real / "
+                              "test=synthetic design.")
     parser.add_argument("--outdir", type=str, default="../models",
                          help="Directory to write best_model.pkl and metrics report into.")
     parser.add_argument("--test-size", type=float, default=0.2)
@@ -129,15 +134,35 @@ def main():
     outdir = Path(args.outdir).resolve()
     outdir.mkdir(parents=True, exist_ok=True)
 
-    print(f"[1/5] Loading dataset from: {csv_path}")
+    print(f"[1/5] Loading TRAINING dataset from: {csv_path}")
     X, y = load_data(csv_path)
     print(f"      X shape: {X.shape}   y distribution: {dict(y.value_counts())}")
 
-    print(f"[2/5] Splitting train/test ({int((1-args.test_size)*100)}/{int(args.test_size*100)}, stratified)")
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=args.test_size, random_state=RANDOM_STATE, stratify=y
-    )
-    print(f"      Train: {X_train.shape[0]} rows   Test: {X_test.shape[0]} rows")
+    # Determine CV folds safely: with tiny classes (e.g. only a few 'High'
+    # rows in real data), 5-fold CV would fail. Cap folds at the smallest
+    # class count (min 2) so cross-validation still runs.
+    min_class = int(y.value_counts().min())
+    cv_folds = max(2, min(args.cv_folds, min_class))
+    if cv_folds < args.cv_folds:
+        print(f"      NOTE: smallest class has {min_class} rows; "
+              f"reducing CV folds to {cv_folds} to keep cross-validation valid.")
+
+    if args.test_data:
+        # train=real / test=synthetic design: train on ALL real rows,
+        # evaluate on the separate synthetic set.
+        test_path = Path(args.test_data).resolve()
+        print(f"[2/5] Using separate TEST dataset: {test_path}")
+        X_train, y_train = X, y
+        X_test, y_test = load_data(test_path)
+        print(f"      Train (real): {X_train.shape[0]} rows   "
+              f"Test (synthetic): {X_test.shape[0]} rows")
+    else:
+        print(f"[2/5] Splitting train/test "
+              f"({int((1-args.test_size)*100)}/{int(args.test_size*100)}, stratified)")
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=args.test_size, random_state=RANDOM_STATE, stratify=y
+        )
+        print(f"      Train: {X_train.shape[0]} rows   Test: {X_test.shape[0]} rows")
 
     print("[3/5] Training candidate models: Logistic Regression, Decision Tree, "
           "Random Forest, SVM (RBF)")
@@ -150,7 +175,7 @@ def main():
     for name, model in candidates.items():
         print(f"      -> training {name} ...")
         metrics, report, cm, y_pred = evaluate_model(
-            name, model, X_train, X_test, y_train, y_test, cv_folds=args.cv_folds
+            name, model, X_train, X_test, y_train, y_test, cv_folds=cv_folds
         )
         results.append(metrics)
         reports[name] = report

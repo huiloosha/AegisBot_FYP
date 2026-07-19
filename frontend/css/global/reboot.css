@@ -1,0 +1,45 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+    background-image: url("https://i.ibb.co/VWyn3HB6/Aura.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    font-family: "Inter", "Arial", sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    min-width: 1280px;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+main {
+    flex-grow: 1;
+}
+
+img {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    object-fit: cover;
+}
+
+h1 {
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: 700;
+    background: linear-gradient(90deg,#F2F2F7 0%,#44449A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin: 0;
+}

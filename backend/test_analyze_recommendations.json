@@ -1,0 +1,25 @@
+{
+  "password": "password",
+  "answers": {
+    "PM01": 4,
+    "PM02": 0,
+    "PM03": 0,
+    "PM04": 0,
+    "PM05": 4,
+    "AUTH01": 0,
+    "AUTH02": 4,
+    "AUTH03": 0,
+    "AUTH04": 4,
+    "AUTH05": 0,
+    "PHISH01": 0,
+    "PHISH02": 4,
+    "PHISH03": 4,
+    "PHISH04": 0,
+    "PHISH05": 0,
+    "SOC01": 4,
+    "SOC02": 4,
+    "SOC03": 0,
+    "SOC04": 4,
+    "SOC05": 4
+  }
+}

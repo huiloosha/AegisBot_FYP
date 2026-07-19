@@ -1,0 +1,129 @@
+========================================
+AegisBot — TEST COMMANDS
+========================================
+
+--- 1. ML unit tests ---
+cd E:\AegisBot_FYP\ml\tests
+python3 test_ml.py
+
+--- 2. Recommendation engine tests ---
+cd E:\AegisBot_FYP\ml\tests
+python3 test_recommender.py
+
+--- 3. Password analysis ---
+cd E:\AegisBot_FYP\ml\src
+python3 password_analysis.py
+python3 -c "from password_analysis import analyze_password, password_strength_score; f=analyze_password('password'); print(password_strength_score(f))"
+
+--- 4. Start server (Window 1) ---
+cd E:\AegisBot_FYP\backend
+Remove-Item .\aegisbot.db -ErrorAction SilentlyContinue
+python run.py
+
+--- (Window 2 for everything below) ---
+cd E:\AegisBot_FYP\backend
+
+--- 5. Health ---
+Invoke-RestMethod -Uri http://127.0.0.1:5000/api/health
+
+--- 6. Questions seeded ---
+python -c "import sqlite3; print(sqlite3.connect('aegisbot.db').execute('SELECT COUNT(*) FROM questions').fetchone()[0])"
+
+--- 7. Analyze (guest) ---
+$body = Get-Content test_analyze_recommendations.json -Raw
+Invoke-RestMethod -Uri http://127.0.0.1:5000/api/analyze -Method Post -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 10
+
+--- 8. Recommendation plan shape ---
+$r = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/analyze -Method Post -ContentType "application/json" -Body $body
+$r.recommendations_plan.summary
+$r.recommendations_plan.recommendations | Format-Table code, priority, action
+$r.recommendations_plan.all_issues.Count
+
+--- 9. Register ---
+$reg = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/register -Method Post -ContentType "application/json" -Body '{"full_name":"Alice","email":"alice@x.com","password":"hunter2xy"}'
+$token = $reg.token
+$token
+
+--- 9b. Duplicate email (expect 409) ---
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/register -Method Post -ContentType "application/json" -Body '{"full_name":"A2","email":"alice@x.com","password":"hunter2xy"}' } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 9c. Short password (expect 400) ---
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/register -Method Post -ContentType "application/json" -Body '{"full_name":"B","email":"b@x.com","password":"short"}' } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 9d. Login wrong password (expect 401) ---
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/login -Method Post -ContentType "application/json" -Body '{"email":"alice@x.com","password":"WRONG"}' } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 9e. Login correct ---
+$login = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/login -Method Post -ContentType "application/json" -Body '{"email":"alice@x.com","password":"hunter2xy"}'
+$token = $login.token
+$h = @{ Authorization = "Bearer $token" }
+
+--- 9f. Me without token (expect 401) ---
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/me } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 9g. Me with token ---
+Invoke-RestMethod -Uri http://127.0.0.1:5000/api/me -Headers $h
+
+--- 10. Guest save (not saved) ---
+$g = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Method Post -ContentType "application/json" -Body $body
+$g.saved
+$g.assessment_id
+
+--- 10b. Registered without consent (expect 400) ---
+$noConsent = '{"password":"password","consent_given":false,"answers":{"PM01":4,"PM02":0,"PM03":0,"PM04":0,"PM05":4,"AUTH01":0,"AUTH02":4,"AUTH03":0,"AUTH04":4,"AUTH05":0,"PHISH01":0,"PHISH02":4,"PHISH03":4,"PHISH04":0,"PHISH05":0,"SOC01":4,"SOC02":4,"SOC03":0,"SOC04":4,"SOC05":4}}'
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Method Post -ContentType "application/json" -Body $noConsent -Headers $h } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 10c. Registered with consent (expect 201) ---
+$withConsent = '{"password":"password","consent_given":true,"answers":{"PM01":4,"PM02":0,"PM03":0,"PM04":0,"PM05":4,"AUTH01":0,"AUTH02":4,"AUTH03":0,"AUTH04":4,"AUTH05":0,"PHISH01":0,"PHISH02":4,"PHISH03":4,"PHISH04":0,"PHISH05":0,"SOC01":4,"SOC02":4,"SOC03":0,"SOC04":4,"SOC05":4}}'
+$saved = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Method Post -ContentType "application/json" -Body $withConsent -Headers $h
+$saved.saved
+$aid = $saved.assessment_id
+$aid
+
+--- 11. History with token ---
+Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Headers $h | ConvertTo-Json -Depth 5
+
+--- 11b. History without token (expect 401) ---
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 11c. Detail ---
+$d = Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/assessments/$aid" -Headers $h
+$d.password_score
+$d.answers.PSObject.Properties.Count
+$d | ConvertTo-Json -Depth 10
+
+--- 12. Cross-user isolation ---
+$bob = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/register -Method Post -ContentType "application/json" -Body '{"full_name":"Bob","email":"bob@x.com","password":"bobpass12"}'
+$hb = @{ Authorization = "Bearer $($bob.token)" }
+(Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Headers $hb).count
+
+--- 12b. Bob reads Alice's assessment (expect 404) ---
+try { Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/assessments/$aid" -Headers $hb } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 13. Progress: get recommend_id ---
+$d = Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/assessments/$aid" -Headers $h
+$rid = $d.recommendations[0].recommend_id
+$rid
+
+--- 13b. Mark recommendation done ---
+Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/recommendations/$rid" -Method Patch -ContentType "application/json" -Body '{"completed":true}' -Headers $h
+
+--- 13c. Bob patches Alice's recommendation (expect 404) ---
+try { Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/recommendations/$rid" -Method Patch -ContentType "application/json" -Body '{"completed":true}' -Headers $hb } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 14. Logout ---
+Invoke-RestMethod -Uri http://127.0.0.1:5000/api/logout -Method Post -Headers $h
+
+--- 14b. Token now invalid (expect 401) ---
+try { Invoke-RestMethod -Uri http://127.0.0.1:5000/api/me -Headers $h } catch { $_.Exception.Response.StatusCode.value__ }
+
+--- 15. Persistence: count before restart ---
+$login = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/login -Method Post -ContentType "application/json" -Body '{"email":"alice@x.com","password":"hunter2xy"}'
+$h = @{ Authorization = "Bearer $($login.token)" }
+(Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Headers $h).count
+
+--- 15b. Restart server (Window 1): Ctrl+C then: python run.py ---
+--- 15c. Count after restart (should match) ---
+$login = Invoke-RestMethod -Uri http://127.0.0.1:5000/api/login -Method Post -ContentType "application/json" -Body '{"email":"alice@x.com","password":"hunter2xy"}'
+$h = @{ Authorization = "Bearer $($login.token)" }
+(Invoke-RestMethod -Uri http://127.0.0.1:5000/api/assessments -Headers $h).count

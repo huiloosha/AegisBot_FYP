@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: aegisbot
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend run:app

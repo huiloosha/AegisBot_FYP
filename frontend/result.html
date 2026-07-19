@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisBot — Your Cyber Risk Results</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="nav">
+        <a class="nav__logo" href="assessment.html">
+            <span class="nav__logo-picture">
+                <img class="nav__logo-img" src="images/aegisbot_logo.png" alt="AegisBot Logo" width="138" height="38">
+            </span>
+        </a>
+        <ul class="nav__links">
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="landing.html">
+                    Home
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="assessment.html">
+                    Start Full Assessment
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="password-check.html">
+                    Quick Password Check
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="dashboard.html">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="result.html">
+                    Last Results
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="recommendations.html">
+                    Last Recommendations
+                </a>
+            </li>
+        </ul>
+        <div class="nav__login-outer">
+            <a class="nav__login" href="login.html">Log In</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="result">
+            <div id="loading" class="loading">
+                <p class="loading__text">No results to show yet. Take the <a href="./assessment.html" class="loading__link">assessment</a> first</p>
+            </div>
+
+            <div id="report" class="result__report result__report--hidden">
+                <div class="result__overall">
+                    <h1 class="result__title"> Your Cyber Risk Report</h1>
+                </div>
+
+                <div class="result__gauge-wrap">
+                    <div id="mainGauge" class="result__gauge-main">
+
+                    </div>
+                    <p id="summaryText" class="result__summary">
+
+                    </p>
+                </div>
+
+                <div class="result__subgauges">
+                    <div class="result__subgauge-wrap">
+                        <span class="result__subgauge-title">Behaviour</span>
+                        <div id="behaviourGauge" class="result__subgauge">
+
+                        </div>
+                        <div id="behaviourNote" class="result__subgauge-note">
+
+                        </div>
+                    </div>
+
+                    <div class="result__subgauge-wrap">
+                        <span class="result__subgauge-title">Password</span>
+                        <div id="passwordGauge" class="result__subgauge">
+
+                        </div>
+                        <div id="passwordNote" class="result__subgauge-note">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result__feedback">
+                    <div class="result__feedback-wrap">
+                        <span class="result__feedback-title">Your Strengths</span>
+                        <ul id="strengthsList" class="result__feedback-desc">
+
+                        </ul>
+                    </div>
+                    
+                    <div class="result__feedback-wrap">
+                        <span class="result__feedback-title result__feedback-title--second">Areas for Improvement</span>
+                        <ul id="improvementsList" class="result__feedback-desc">
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="result__insights">
+                    <span class="result__insights-title">Assessment Insights</span>
+                    <div class="result__insights-wrap">
+                        <div id="insightsText" class="result__insights-text">
+                            
+                        </div>
+                        <img class="result__insights-image" src="./images/AegisBot_mascot.png" alt="AegisBot Mascot" width="347" height="348">
+                    </div>
+                </div>
+
+                <div class="result__actions">
+                    <a class="btn btn--ghost btn--long" href="recommendations.html">View Recommendations</a>
+                    <a class="btn btn--ghost btn--long" href="dashboard.html">Go to Dashboard</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer__left">
+            <div class="footer__logo">
+                <a class="footer__logopicture" href="assessment.html">
+                    <img class="footer__logo-img" src="images/aegisbot_logo.png" alt="AegisBot Logo" width="138" height="38">
+                </a>
+            </div>
+        </div>
+
+        <div class="footer__right">
+            <p class="footer__text">Predictive Cyber-Risk Personal Assistant Through Behavior-Based Analytics Using Machine Learning</p>
+            <p class="footer__text">Developed as&nbsp;a&nbsp;Final Year Project at&nbsp;Asia Pacific University (APU), Kuala Lumpur, Malaysia.</p>
+            <p class="footer__text">&copy;&nbsp;2026 Olga Khegai. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/result.js"></script>
+</body>
+</html>

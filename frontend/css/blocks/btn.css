@@ -1,0 +1,44 @@
+.btn {
+    padding: 6px;
+    width: 145px;
+    font-size: 14px;
+    line-height: 26px;
+    font-weight: 400;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    box-shadow: inset 0 0 3px 4px rgba(255, 255, 255, 0.25);
+    background-color: transparent;
+    text-align: center;
+    display: block;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: rgba(3, 18, 84, 1);
+}
+
+.btn--ghost {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.btn--ghost:hover {
+    opacity: 1;
+}
+
+.btn--long {
+    width: 267px;
+}
+
+.btn--pwd {
+    width: 280px;
+    background-color: rgba(3, 18, 84, 1);
+    padding: 20px 16px;
+    margin: 0 0 15px;
+}
+
+.btn--pwd:hover {
+    background-color: transparent;
+}

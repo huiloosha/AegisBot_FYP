@@ -1,27 +1,31 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
 
-# Virtual env
-.venv/
+# Virtual environment
 venv/
+.venv/
+env/
 
-# VS Code
-.vscode/
-
-# Environment
+# Environment variables
 .env
+.env.*
 
-# ML models
-ml/models/
-*.pkl
+# IDE
+.vscode/
+.idea/
 
-# Reports
-training_report.json
-
-# Jupyter
-.ipynb_checkpoints/
-
-# OS
+# Operating system
 .DS_Store
 Thumbs.db
+
+# Test/cache files
+.pytest_cache/
+.mypy_cache/
+
+# Local database
+backend/aegisbot.db
+
+# Local temporary files
+*.log

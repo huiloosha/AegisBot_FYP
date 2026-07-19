@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>AegisBot — Behaviour Assessment</title>
+</head>
+<body>
+
+    <div id="consentOverlay" class="consent">
+        <div class="consent__box">
+            <h1 class="consent__title">Research Consent</h1>
+            <p class="consent__subtitle">Please read and agree before continuing.</p>
+
+            <div class="consent__section">
+                <p class="consent__section-title">Purpose</p>
+                <p class="consent__section-text">This tool assesses your cyber hygiene through
+                    behavioural questions and password analysis to estimate your cyber risk level
+                    and provide recommendations.</p>
+            </div>
+            <div class="consent__section">
+                <p class="consent__section-title">Password Privacy</p>
+                <p class="consent__section-text">Your password is analysed only to evaluate its
+                    strength. It is never stored, logged, or used for authentication.</p>
+            </div>
+            <div class="consent__section">
+                <p class="consent__section-title">Data Usage</p>
+                <p class="consent__section-text">If you are logged in, your assessment results are
+                    saved to your account so you can track your progress over time. Guest assessments
+                    are not stored.</p>
+            </div>
+            <div class="consent__section">
+                <p class="consent__section-title">Educational Purpose</p>
+                <p class="consent__section-text">This system is developed as a Final Year Project for
+                    educational and research purposes and does not replace professional security advice.</p>
+            </div>
+
+            <div class="consent__actions">
+                <div class="consent__agree" id="consentAgreeBox">
+                    <span class="option__radio option__radio--consent"></span>
+                    <span class="consent__agree-text">I have read and agree to the above, and I consent to participate.</span>
+                </div>
+                <button id="consentContinue" class="btn btn--ghost consent__continue" type="button">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <a class="nav__logo" href="assessment.html">
+            <span class="nav__logo-picture">
+                <img class="nav__logo-img" src="images/aegisbot_logo.png" alt="AegisBot Logo" width="138" height="38">
+            </span>
+        </a>
+        <ul class="nav__links">
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="landing.html">
+                    Home
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="assessment.html">
+                    Start Full Assessment
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="password-check.html">
+                    Quick Password Check
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="dashboard.html">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="result.html">
+                    Last Results
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="recommendations.html">
+                    Last Recommendations
+                </a>
+            </li>
+        </ul>
+        <div class="nav__login-outer">
+            <a class="nav__login" href="login.html">Log In</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="assessment">
+            <div class="assessment__intro">
+                <h1 class="assessment__title">Behaviour Assessment</h1>
+                <p class="assessment__desc">Assess your daily cybersecurity habits through a&nbsp;series of&nbsp;research-based
+                     questions designed to&nbsp;identify common security risks.</p>
+                <p class="assessment__eta">Estimated completion time: 3&ndash;5&nbsp;minutes.</p>
+            </div>
+
+            <div id="loading" class="loading loading--hide">
+                <p class="loading__text">Preparing questions...</p>
+            </div>
+
+            <div id="assess" class="assessment-grid assessment-grid--hidden">
+                <aside id="assessmentSidebar" class="assessment-grid__sidebar">
+                    <div class="assessment-grid__cat" data-cat="PM">
+                        <div class="assessment-grid__cat-dot">
+                            <img class="assessment-grid__cat-icon" src="images/PM-icon.png" alt="Password Security Icon" width="49" height="49">
+                            <span class="assessment-grid__cat-name">Password Security</span>
+                        </div>
+                    </div>
+                    <div class="assessment-grid__cat" data-cat="AUTH">
+                        <div class="assessment-grid__cat-dot">
+                            <img class="assessment-grid__cat-icon" src="images/AUTH-icon.png" alt="Authentication Icon" width="49" height="49">
+                            <span class="assessment-grid__cat-name">Authentication</span>
+                        </div>
+                    </div>
+                    <div class="assessment-grid__cat" data-cat="PHISH">
+                        <div class="assessment-grid__cat-dot">
+                            <img class="assessment-grid__cat-icon" src="images/PHISH-icon.png" alt="Phishing Awareness Icon" width="49" height="49">
+                            <span class="assessment-grid__cat-name">Phishing Awareness</span>
+                        </div>
+                    </div>
+                    <div class="assessment-grid__cat" data-cat="SOC">
+                        <div class="assessment-grid__cat-dot">
+                            <img class="assessment-grid__cat-icon" src="images/SOC-icon.png" alt="Safe Browsing Icon" width="49" height="49">
+                            <span class="assessment-grid__cat-name">Safe Browsing</span>
+                        </div>
+                    </div>
+                </aside>
+
+                <section class="panel">
+                    <div id="assessmentProgress" class="panel__progress">
+                        <div class="panel__progress-track">
+                            <div id="progressBar" class="panel__progress-bar"></div>
+                        </div>
+                        <div id="progressLabel" class="panel__progress-label">
+                            <span class="panel__progress-count">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div id="questionView" class="panel__question">
+                        <div id="qCategory" class="panel__question-category">
+
+                        </div>
+                        <div class="panel__question-wrap">
+                            <div id="qText" class="panel__question-text">
+
+                            </div>
+                            <div id="qWhy" class="panel__question-why">
+
+                            </div>
+                        </div>
+                        <div id="options" class="panel__question-options">
+
+                        </div>
+                    </div>
+
+                    <div id="passwordView" class="panel__question panel__question--hidden panel__question--password">
+                        <div class="panel__question-category">
+                            Final Step
+                        </div>
+                        <div class="panel__question-wrap">
+                            <div class="panel__question-text">
+                                Enter a&nbsp;password to&nbsp;analyse its strength
+                            </div>
+                            <div class="panel__question-why">
+                                Your password is&nbsp;analysed only to&nbsp;evaluate its strength. 
+                                It&nbsp;is&nbsp;never stored or&nbsp;used for authentication.
+                            </div>
+                        </div>
+                        <div class="panel__question-wrapped">
+                            <input class="panel__question-input" type="password" name="pwInput" id="pwInput"
+                            placeholder="Enter a password to check" autocomplete="off">
+                            <div class="panel__question-note">
+                                <span class="panel__question-text panel__question-text--small">This contributes to&nbsp;your overall cyber risk score.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pabbel__nav-wrap">
+                        <div class="panel__nav">
+                        <button id="backBtn" class="btn btn--ghost">Back</button>
+                        <button id="nextBtn" class="btn btn--primary">Next</button>
+                    </div>
+
+                    <div id="errorMsg" class="panel__error-msg">
+
+                    </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer__left">
+            <div class="footer__logo">
+                <a class="footer__logopicture" href="assessment.html">
+                    <img class="footer__logo-img" src="images/aegisbot_logo.png" alt="AegisBot Logo" width="138" height="38">
+                </a>
+            </div>
+        </div>
+
+        <div class="footer__right">
+            <p class="footer__text">Predictive Cyber-Risk Personal Assistant Through Behavior-Based Analytics Using Machine Learning</p>
+            <p class="footer__text">Developed as&nbsp;a&nbsp;Final Year Project at&nbsp;Asia Pacific University (APU), Kuala Lumpur, Malaysia.</p>
+            <p class="footer__text">&copy;&nbsp;2026 Olga Khegai. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/consent.js"></script>
+    <script src="js/assessment.js"></script>
+</body>
+</html>

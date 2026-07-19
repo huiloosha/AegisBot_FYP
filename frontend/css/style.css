@@ -1,0 +1,15 @@
+@import url(./global/fonts.css);
+@import url(./global/reboot.css);
+@import url(./global/container.css);
+
+@import url(./blocks/nav.css);
+@import url(./blocks/assessment.css);
+@import url(./blocks/btn.css);
+@import url(./blocks/footer.css);
+@import url(./blocks/result.css);
+@import url(./blocks/recommendations.css);
+@import url(./blocks/dashboard.css);
+@import url(./blocks/login.css);
+@import url(./blocks/password-check.css);
+@import url(./blocks/landing.css);
+@import url(./blocks/consent.css);

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>AegisBot — Dashboard</title>
+</head>
+<body>
+    <nav class="nav">
+        <a class="nav__logo" href="assessment.html">
+            <span class="nav__logo-picture">
+                <img class="nav__logo-img" src="images/aegisbot_logo.png" alt="AegisBot Logo" width="138" height="38">
+            </span>
+        </a>
+        <ul class="nav__links">
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="landing.html">
+                    Home
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="assessment.html">
+                    Start Full Assessment
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="password-check.html">
+                    Quick Password Check
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="dashboard.html">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="result.html">
+                    Last Results
+                </a>
+            </li>
+            <li class="nav__link-list">
+                <a class="nav__links-link" href="recommendations.html">
+                    Last Recommendations
+                </a>
+            </li>
+        </ul>
+        <div class="nav__login-outer">
+            <a class="nav__login" href="login.html">Log In</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="dash">
+            <div id="loading" class="loading">
+                <p class="loading__text">Loading your dashboard…</p>
+            </div>
+
+            <div id="guest" class="dash__guest is-hidden">
+                <h1 class="dash__guest-title">Sign in to view your dashboard</h1>
+                <p class="dash__guest-desc">Your dashboard tracks your cyber hygiene over time.
+                    Log in or create an account to save and monitor your progress.</p>
+                <a class="btn" href="login.html">Log In</a>
+            </div>
+
+            <div id="empty" class="dash__empty is-hidden">
+                <h1 class="dash__empty-title">No assessments yet</h1>
+                <p class="dash__empty-desc">Take your first assessment to start tracking your cyber hygiene.</p>
+                <a class="btn btn--long" href="assessment.html">Start Assessment</a>
+            </div>
+
+            <div id="board" class="dash__board is-hidden">
+                <div class="dash__top">
+                    <div class="dash__welcome">
+                        <h1 class="dash__welcome-title">Welcome back, <span class="dash__username" id="userName">there</span></h1>
+                        <p class="dash__welcome-sub">Here's an overview of your current cyber hygiene status.</p>
+                        <a class="dash__welcome-link" href="assessment.html">Start New Assessment →</a>
+                    </div>
+
+                    <div class="dash__stats">
+                        <div class="dash__stat">
+                            <span class="dash__stat-title">Cyber Risk Score</span>
+                            <div id="riskGauge" class="dash__stat-gauge"></div>
+                        </div>
+                        <div class="dash__stat">
+                            <span class="dash__stat-title">Behaviour</span>
+                            <div id="behaviourGauge" class="dash__stat-gauge"></div>
+                        </div>
+                        <div class="dash__stat">
+                            <span class="dash__stat-title">Password</span>
+                            <div id="passwordGauge" class="dash__stat-gauge"></div>
+                        </div>
+                        <div class="dash__stat dash__stat--count">
+                            <span class="dash__stat-title dash__stat-title--differ">Assessments Completed</span>
+                            <span id="completedCount" class="dash__stat-count">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash__bottom">
+                    <div class="dash__trend">
+                        <h2 class="dash__trend-title">Cyber Risk Trend</h2>
+                        <p id="trendDelta" class="dash__trend-delta"></p>
+                        <div id="trendChart" class="dash__trend-chart"></div>
+                    </div>
+
+                    <div class="dash__checklist">
+                        <h2 class="dash__checklist-title">Security Checklist</h2>
+                        <ul id="checklist" class="dash__checklist-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer__left">
+            <div class="footer__logo">
+                <a class="footer__logopicture" href="assessment.html">
+                    <img class="footer__logo-img" src="images/aegisbot_logo.png" alt="AegisBot Logo" width="138" height="38">
+                </a>
+            </div>
+        </div>
+
+        <div class="footer__right">
+            <p class="footer__text">Predictive Cyber-Risk Personal Assistant Through Behavior-Based Analytics Using Machine Learning</p>
+            <p class="footer__text">Developed as&nbsp;a&nbsp;Final Year Project at&nbsp;Asia Pacific University (APU), Kuala Lumpur, Malaysia.</p>
+            <p class="footer__text">&copy;&nbsp;2026 Olga Khegai. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{
+  "best_model": "Decision Tree",
+  "comparison_table": [
+    {
+      "model": "Decision Tree",
+      "accuracy": 0.6753846153846154,
+      "precision_macro": 0.6694578630064467,
+      "recall_macro": 0.7053945249597423,
+      "f1_macro": 0.6668187903127661,
+      "cv_f1_macro_mean": 0.7067660114570871,
+      "cv_f1_macro_std": 0.09302808122613303,
+      "train_time_sec": 0.003
+    },
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.6538461538461539,
+      "precision_macro": 0.6277413300073944,
+      "recall_macro": 0.6466183574879226,
+      "f1_macro": 0.6278947907066321,
+      "cv_f1_macro_mean": 0.6179745378830047,
+      "cv_f1_macro_std": 0.03436333175503335,
+      "train_time_sec": 0.011
+    },
+    {
+      "model": "SVM (RBF)",
+      "accuracy": 0.62,
+      "precision_macro": 0.41333333333333333,
+      "recall_macro": 0.5413043478260869,
+      "f1_macro": 0.4678109057476778,
+      "cv_f1_macro_mean": 0.6051946214989693,
+      "cv_f1_macro_std": 0.015307443789478339,
+      "train_time_sec": 0.008
+    },
+    {
+      "model": "Random Forest",
+      "accuracy": 0.5753846153846154,
+      "precision_macro": 0.7088014981273408,
+      "recall_macro": 0.5144122383252818,
+      "f1_macro": 0.4584173684061367,
+      "cv_f1_macro_mean": 0.640898196332979,
+      "cv_f1_macro_std": 0.011277185587800194,
+      "train_time_sec": 0.324
+    }
+  ],
+  "classification_reports": {
+    "Logistic Regression": "              precision    recall  f1-score   support\n\n        High       0.53      0.50      0.51       144\n         Low       0.73      0.97      0.83       230\n    Moderate       0.63      0.47      0.54       276\n\n    accuracy                           0.65       650\n   macro avg       0.63      0.65      0.63       650\nweighted avg       0.64      0.65      0.64       650\n",
+    "Decision Tree": "              precision    recall  f1-score   support\n\n        High       0.60      0.78      0.67       144\n         Low       0.71      0.92      0.80       230\n    Moderate       0.70      0.42      0.52       276\n\n    accuracy                           0.68       650\n   macro avg       0.67      0.71      0.67       650\nweighted avg       0.68      0.68      0.66       650\n",
+    "Random Forest": "              precision    recall  f1-score   support\n\n        High       1.00      0.06      0.11       144\n         Low       0.63      0.97      0.76       230\n    Moderate       0.50      0.52      0.51       276\n\n    accuracy                           0.58       650\n   macro avg       0.71      0.51      0.46       650\nweighted avg       0.66      0.58      0.51       650\n",
+    "SVM (RBF)": "              precision    recall  f1-score   support\n\n        High       0.00      0.00      0.00       144\n         Low       0.70      0.98      0.81       230\n    Moderate       0.54      0.64      0.59       276\n\n    accuracy                           0.62       650\n   macro avg       0.41      0.54      0.47       650\nweighted avg       0.48      0.62      0.54       650\n"
+  },
+  "confusion_matrices": {
+    "Logistic Regression": [
+      [
+        72,
+        0,
+        72
+      ],
+      [
+        3,
+        222,
+        5
+      ],
+      [
+        62,
+        83,
+        131
+      ]
+    ],
+    "Decision Tree": [
+      [
+        112,
+        0,
+        32
+      ],
+      [
+        1,
+        212,
+        17
+      ],
+      [
+        75,
+        86,
+        115
+      ]
+    ],
+    "Random Forest": [
+      [
+        8,
+        0,
+        136
+      ],
+      [
+        0,
+        223,
+        7
+      ],
+      [
+        0,
+        133,
+        143
+      ]
+    ],
+    "SVM (RBF)": [
+      [
+        0,
+        0,
+        144
+      ],
+      [
+        0,
+        226,
+        4
+      ],
+      [
+        0,
+        99,
+        177
+      ]
+    ]
+  },
+  "label_caveat": "risk_level is rubric-derived (deterministic function of the same 28 input features), not an independently verified real-world outcome. These metrics measure the model's ability to reproduce the evidence-based scoring rubric, per docs/AegisBot_ML_Design_Tables.xlsx -> 'Notes & Limitations'."
+}

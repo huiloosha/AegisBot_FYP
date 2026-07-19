@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Evidence-based Cyber-Risk Scoring Rubric
 AegisBot / Predictive Cyber-Risk Personal Assistant
@@ -46,30 +45,29 @@ QUESTIONS = [
          risk_direction="direct",
          text="How often do you reuse the same password across multiple accounts?",
          evidence="Password reuse is the single strongest predictor of credential-stuffing "
-                   "compromise (Nwakeze et al., 2025; NIST SP 800-63B)."),
+                   "compromise."),
     dict(code="PM02", category="PM", weight=0.15, response_type="frequency",
          risk_direction="reverse",
          text="How often do you change/update your passwords after a service breach notice?",
-         evidence="Timely credential rotation reduces exposure window (NIST SP 800-63B)."),
+         evidence="Timely credential rotation reduces exposure window."),
     dict(code="PM03", category="PM", weight=0.25, response_type="yes_no",
          risk_direction="reverse",
          text="Do you use a password manager to generate/store passwords?",
-         evidence="Password managers correlate with higher-entropy, unique passwords "
-                   "(Folino et al., 2023)."),
+         evidence="Password managers correlate with higher-entropy, unique passwords."),
     dict(code="PM04", category="PM", weight=0.20, response_type="scale",
          risk_direction="reverse",
          text="How complex are the passwords you typically create (length/character mix)?",
-         evidence="Composition/length strongly affects brute-force resistance (NIST SP 800-63B)."),
+         evidence="Composition/length strongly affects brute-force resistance."),
     dict(code="PM05", category="PM", weight=0.15, response_type="yes_no",
          risk_direction="direct",
          text="Do you write down or share your passwords with other people?",
-         evidence="Manual sharing/storage bypasses technical controls (OWASP ASVS v4)."),
+         evidence="Manual sharing/storage bypasses technical controls."),
 
     # --- Authentication / MFA (AUTH) -------------------------------------
     dict(code="AUTH01", category="AUTH", weight=0.30, response_type="yes_no",
          risk_direction="reverse",
          text="Do you enable Two-Factor/Multi-Factor Authentication (2FA/MFA) on important accounts?",
-         evidence="MFA blocks ~99% of automated account-takeover attempts (Microsoft/NIST)."),
+         evidence="MFA blocks ~99% of automated account-takeover attempts."),
     dict(code="AUTH02", category="AUTH", weight=0.20, response_type="frequency",
          risk_direction="direct",
          text="How often do you dismiss or skip 2FA prompts when they are offered?",
@@ -81,18 +79,17 @@ QUESTIONS = [
     dict(code="AUTH04", category="AUTH", weight=0.20, response_type="yes_no",
          risk_direction="direct",
          text="Have you ever shared a one-time password (OTP) or verification code with someone else?",
-         evidence="OTP sharing is a common social-engineering / SIM-swap vector (Hassan et al., 2025)."),
+         evidence="OTP sharing is a common social-engineering / SIM-swap vector."),
     dict(code="AUTH05", category="AUTH", weight=0.15, response_type="frequency",
          risk_direction="reverse",
          text="How often do you review login-activity alerts for your accounts?",
-         evidence="Active monitoring shortens detection time for account compromise (UEBA literature)."),
+         evidence="Active monitoring shortens detection time for account compromise."),
 
     # --- Phishing & Awareness (PHISH) ------------------------------------
     dict(code="PHISH01", category="PHISH", weight=0.25, response_type="scale",
          risk_direction="reverse",
          text="How confident are you in identifying phishing emails or messages?",
-         evidence="Self-assessed phishing literacy correlates with click-through resistance "
-                   "(Mihailescu et al., 2023)."),
+         evidence="Self-assessed phishing literacy correlates with click-through resistance."),
     dict(code="PHISH02", category="PHISH", weight=0.25, response_type="frequency",
          risk_direction="direct",
          text="How often do you click links from unknown or unexpected senders?",
@@ -108,14 +105,14 @@ QUESTIONS = [
     dict(code="PHISH05", category="PHISH", weight=0.10, response_type="frequency",
          risk_direction="reverse",
          text="How often do you install software/app updates when prompted?",
-         evidence="Patch latency is a recognised exploitability factor (Adabala, 2021)."),
+         evidence="Patch latency is a recognised exploitability factor."),
 
     # --- Social Media & Digital Footprint Exposure (SOC) ------------------
     dict(code="SOC01", category="SOC", weight=0.25, response_type="scale",
          risk_direction="direct",
          text="How much personal information (location, birthdate, workplace) do you share "
               "publicly on social media?",
-         evidence="Public PII exposure enables targeted social engineering (Wishvaranga et al., 2024)."),
+         evidence="Public PII exposure enables targeted social engineering."),
     dict(code="SOC02", category="SOC", weight=0.20, response_type="frequency",
          risk_direction="direct",
          text="Do you accept friend/connection requests from people you don't know?",
@@ -127,7 +124,7 @@ QUESTIONS = [
     dict(code="SOC04", category="SOC", weight=0.20, response_type="frequency",
          risk_direction="direct",
          text="How often do you use public Wi-Fi without a VPN?",
-         evidence="Unencrypted public networks enable traffic interception (Blancaflor et al., 2025)."),
+         evidence="Unencrypted public networks enable traffic interception."),
     dict(code="SOC05", category="SOC", weight=0.15, response_type="yes_no",
          risk_direction="direct",
          text="Do you geotag posts or share your real-time location publicly?",
@@ -173,3 +170,34 @@ def risk_level_from_score(score: float) -> str:
         if lo <= score <= hi:
             return level
     return "High" if score > 100 else "Low"
+
+
+def behaviour_risk_and_score(answers: dict):
+    """Compute the behavioural risk and its inverse 'score' from the 20 answers.
+
+    Uses the SAME formula as build_dataset.score_behaviour, so the value shown to
+    the user is consistent with what the model was trained on.
+
+        risk_frac  = answer/4            (direct question)
+        risk_frac  = 1 - answer/4        (reverse question)
+        cat_risk   = sum(risk_frac * question_weight) * 100   per category
+        risk       = sum(cat_risk * CATEGORY_WEIGHTS[cat])    -> 0..100 (higher = worse)
+        score      = 100 - risk                               -> 0..100 (higher = safer)
+
+    Returns (behaviour_risk, behaviour_score), both rounded to 1 dp.
+    The 'score' is what the UI displays (higher = better), matching password_score.
+    """
+    risk = 0.0
+    for cat, cat_w in CATEGORY_WEIGHTS.items():
+        cat_qs = [q for q in QUESTIONS if q["category"] == cat]
+        s = 0.0
+        for q in cat_qs:
+            raw = float(answers.get(q["code"], 0) or 0)
+            raw = max(0.0, min(raw, 4.0))
+            norm = raw / 4.0
+            risk_frac = norm if q["risk_direction"] == "direct" else (1.0 - norm)
+            s += risk_frac * q["weight"] * 100.0
+        risk += s * cat_w
+    risk = max(0.0, min(risk, 100.0))
+    score = 100.0 - risk
+    return round(risk, 1), round(score, 1)
