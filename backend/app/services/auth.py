@@ -95,6 +95,32 @@ def verify_login(db: sqlite3.Connection, email: str, password: str) -> dict | No
     return {"user_id": row["user_id"], "full_name": row["full_name"],
             "email": row["email"]}
 
+def find_or_create_google_user(db: sqlite3.Connection, full_name: str, email: str) -> dict:
+    """Find an existing verified Google user by email or create one.
+
+    Google users have a NULL password_hash, which the existing schema already
+    supports. A user who registered with email/password can safely sign in with
+    Google when Google has verified the same email address. Caller commits.
+    """
+    full_name = (full_name or "Google User").strip() or "Google User"
+    email = (email or "").strip().lower()
+    if not email:
+        raise ValueError("Google account did not provide an email address.")
+
+    row = db.execute(
+        "SELECT user_id, full_name, email FROM users WHERE email = ?", (email,)
+    ).fetchone()
+    if row is not None:
+        return dict(row)
+
+    cur = db.execute(
+        """
+        INSERT INTO users (full_name, email, password_hash, created_at)
+        VALUES (?, ?, NULL, ?)
+        """,
+        (full_name, email, _iso(_utcnow())),
+    )
+    return {"user_id": cur.lastrowid, "full_name": full_name, "email": email}
 
 def issue_token(db: sqlite3.Connection, user_id: int) -> dict:
     """Mint and store a random session token for user_id. Caller commits."""

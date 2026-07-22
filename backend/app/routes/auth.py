@@ -98,3 +98,50 @@ def me():
     if row is None:
         return jsonify({"error": "User not found."}), 404
     return jsonify(dict(row)), 200
+
+@auth_bp.route("/public-config", methods=["GET"])
+def public_config():
+    """Public frontend configuration. No secrets are exposed here."""
+    return jsonify({
+        "google_client_id": current_app.config.get("GOOGLE_CLIENT_ID", "")
+    }), 200
+
+
+@auth_bp.route("/google-login", methods=["POST"])
+def google_login():
+    body = request.get_json(silent=True)
+    credential = body.get("credential") if isinstance(body, dict) else None
+    client_id = current_app.config.get("GOOGLE_CLIENT_ID", "")
+
+    if not client_id:
+        return jsonify({"error": "Google Sign-In is not configured on the server."}), 503
+    if not credential:
+        return jsonify({"error": "Google credential is required."}), 400
+
+    try:
+        from google.auth.transport import requests as google_requests
+        from google.oauth2 import id_token
+
+        claims = id_token.verify_oauth2_token(
+            credential, google_requests.Request(), client_id
+        )
+    except Exception:
+        return jsonify({"error": "Invalid Google sign-in credential."}), 401
+
+    if not claims.get("email_verified"):
+        return jsonify({"error": "Google email is not verified."}), 401
+
+    db = get_db()
+    try:
+        user = auth.find_or_create_google_user(
+            db,
+            full_name=claims.get("name", "Google User"),
+            email=claims.get("email", ""),
+        )
+        session = auth.issue_token(db, user["user_id"])
+        db.commit()
+    except ValueError as exc:
+        db.rollback()
+        return jsonify({"error": str(exc)}), 400
+
+    return jsonify({"user": user, **session}), 200

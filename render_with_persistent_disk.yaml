@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: aegisbot
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend run:app
+    envVars:
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: DATABASE_PATH
+        value: /var/data/aegisbot.db
+    disk:
+      name: aegisbot-data
+      mountPath: /var/data
+      sizeGB: 1

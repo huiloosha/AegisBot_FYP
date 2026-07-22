@@ -101,3 +101,57 @@ document.addEventListener("keydown", function (e) {
     if (!loginCard.classList.contains("auth__card--hidden")) loginBtn.click();
     else registerBtn.click();
 });
+
+/* ---- Google Identity Services ---- */
+async function handleGoogleCredential(response) {
+    const loginError = document.getElementById("loginError");
+    const registerError = document.getElementById("registerError");
+    loginError.textContent = "";
+    registerError.textContent = "";
+
+    try {
+        const res = await api.googleLogin(response.credential);
+        api.saveToken(res.token);
+        window.location.href = "dashboard.html";
+    } catch (e) {
+        const target = loginCard.classList.contains("auth__card--hidden")
+            ? registerError
+            : loginError;
+        target.textContent = e.message;
+    }
+}
+
+async function initGoogleSignIn() {
+    try {
+        const config = await api.getPublicConfig();
+        if (!config.google_client_id) return;
+
+        // GIS may finish loading after this script, so wait briefly for it.
+        for (let i = 0; i < 50 && !window.google?.accounts?.id; i++) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        if (!window.google?.accounts?.id) return;
+
+        google.accounts.id.initialize({
+            client_id: config.google_client_id,
+            callback: handleGoogleCredential,
+        });
+
+        ["googleLoginButton", "googleRegisterButton"].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el) {
+                google.accounts.id.renderButton(el, {
+                    theme: "outline",
+                    size: "large",
+                    width: 320,
+                    text: "continue_with",
+                    shape: "rectangular",
+                });
+            }
+        });
+    } catch (e) {
+        console.error("Google Sign-In initialization failed:", e);
+    }
+}
+
+initGoogleSignIn();

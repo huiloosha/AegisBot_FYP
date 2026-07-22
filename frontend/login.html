@@ -91,6 +91,13 @@
 
                 <p id="loginError" class="auth__error"></p>
                 <button id="loginBtn" class="btn btn--ghost auth__submit" type="button">Login</button>
+
+                <div class="auth__divider">
+                    <span>or</span>
+                </div>
+                <div id="googleLoginButton" class="auth__google">
+
+                </div>
             </div>
 
             <div id="registerCard" class="auth__card auth__card--hidden">
@@ -132,6 +139,13 @@
 
                 <p id="registerError" class="auth__error"></p>
                 <button id="registerBtn" class="btn btn--ghost auth__submit" type="button">Register</button>
+
+                <div class="auth__divider">
+                    <span>or</span>
+                </div>
+                <div id="googleRegisterButton" class="auth__google">
+                    
+                </div>
             </div>
         </section>
     </div>
@@ -152,6 +166,7 @@
         </div>
     </footer>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/api.js"></script>
     <script src="js/login.js"></script>
     <script src="js/header.js"></script>

@@ -265,15 +265,38 @@ function render(result) {
         report.classList.add("result__report--show");
     }
 
-    const raw = sessionStorage.getItem("aegisbot_result");
-    if (!raw) {
-        showLoading();                 // no result yet -> keep the message
-        return;
+    async function loadResult() {
+        const raw = sessionStorage.getItem("aegisbot_result");
+        if (raw) {
+            try {
+                render(JSON.parse(raw));
+                showReport();
+                return;
+            } catch (_) {
+                sessionStorage.removeItem("aegisbot_result");
+            }
+        }
+
+        // "Last Results" must also work after refresh/new browser tab. For a
+        // logged-in user, load their newest persisted assessment from the API.
+        if (api.isLoggedIn()) {
+            try {
+                const history = await api.getHistory();
+                const latest = history.assessments && history.assessments[0];
+                if (latest) {
+                    const result = await api.getAssessment(latest.assessment_id);
+                    sessionStorage.setItem("aegisbot_result", JSON.stringify(result));
+                    render(result);
+                    showReport();
+                    return;
+                }
+            } catch (err) {
+                console.error("Could not load last result:", err);
+            }
+        }
+
+        showLoading("No saved results yet. Complete an assessment first.");
     }
-    try {
-        render(JSON.parse(raw));
-        showReport();
-    } catch (err) {
-        showLoading("Could not read your results. Please retake the assessment.");
-    }
+
+    loadResult();
 })();

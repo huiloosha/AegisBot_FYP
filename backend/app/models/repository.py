@@ -252,9 +252,14 @@ def get_assessment(db: sqlite3.Connection, assessment_id: int) -> dict | None:
                 "common_pattern_detected", "repeated_characters",
             )
         } if pw else {},
+        "behaviour_score": pred["behaviour_score"] if pred else None,
         "password_score": pw["password_score"] if pw else None,
         "answers": {r["question_code"]: r["answer_value"] for r in responses},
         "recommendations": [dict(r) for r in recos],
+        "recommendations_plan": {
+            "recommendations": [dict(r) for r in recos[:5]],
+            "all_issues": [dict(r) for r in recos],
+        },
     }
 
 

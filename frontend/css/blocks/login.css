@@ -121,3 +121,25 @@
     color: rgba(255, 255, 255, 0.6);
     margin: 0;
 }
+
+.auth__divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(320px, 100%);
+    margin: 18px auto 12px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 13px;
+}
+.auth__divider::before,
+.auth__divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+}
+.auth__google {
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+}

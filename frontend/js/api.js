@@ -102,6 +102,15 @@ const api = {
     },
  
     // auth
+    getPublicConfig() {
+        return request("/public-config", { method: "GET" });
+    },
+    googleLogin(credential) {
+        return request("/google-login", {
+            method: "POST",
+            body: JSON.stringify({ credential }),
+        });
+    },
     register(fullName, email, password) {
         return request("/register", {
             method: "POST",

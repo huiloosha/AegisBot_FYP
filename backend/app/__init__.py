@@ -9,6 +9,7 @@ top level. This is the "application factory" pattern. Benefits:
 
 Run it via run.py, which just calls create_app() and app.run().
 """
+import os
 from pathlib import Path
 
 from flask import Flask, send_from_directory
@@ -30,7 +31,8 @@ def create_app(config: dict | None = None) -> Flask:
         JSON_SORT_KEYS=False,   # keep our response key order as-is
         # SQLite database file. Override in tests to point at a temp file or
         # ":memory:" so tests never touch the real data.
-        DATABASE=None,          # None -> db.py falls back to backend/aegisbot.db
+        DATABASE=os.getenv("DATABASE_PATH"),  # Render disk/Postgres migration-friendly path
+        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", ""),
         # Origins the browser is allowed to call this API from. A browser blocks
         # cross-origin requests by default; CORS response headers tell it which
         # frontend origins are trusted. We list local dev servers explicitly
