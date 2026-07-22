@@ -23,7 +23,7 @@ The token returned here is what the frontend stores and sends on later requests
 (notably POST /api/assessments) so the server derives user_id from the token,
 never from the request body.
 """
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
 from app.models.db import get_db
 from app.routes.auth_helpers import current_user_id
@@ -101,9 +101,11 @@ def me():
 
 @auth_bp.route("/public-config", methods=["GET"])
 def public_config():
-    """Public frontend configuration. No secrets are exposed here."""
     return jsonify({
-        "google_client_id": current_app.config.get("GOOGLE_CLIENT_ID", "")
+        "google_client_id": current_app.config.get(
+            "GOOGLE_CLIENT_ID",
+            ""
+        )
     }), 200
 
 
